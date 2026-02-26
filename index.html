@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>AI 智能简历分析系统</title>
+    <style>
+        body { font-family: 'Microsoft YaHei', sans-serif; background-color: #f0f2f5; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        .form-group { margin-bottom: 20px; }
+        label { font-weight: bold; display: block; margin-bottom: 8px; }
+        input[type="file"], textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 10px;}
+        button:hover { background-color: #0056b3; }
+        #loading { display: none; text-align: center; color: #ff9900; font-weight: bold; margin-top: 15px; }
+        #result { display: none; margin-top: 20px; background: #2d2d2d; color: #4af626; padding: 15px; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; font-family: monospace;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🚀 AI 简历分析系统</h2>
+    
+    <div class="form-group">
+        <label>1. 输入岗位需求描述 (比如：熟练掌握 Python，懂大模型)：</label>
+        <textarea id="jobDesc" rows="3" placeholder="在这里输入招聘岗位的要求..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>2. 上传候选人简历 (PDF):</label>
+        <input type="file" id="resumeFile" accept="application/pdf">
+    </div>
+
+    <button onclick="uploadResume()">开始 AI 智能匹配</button>
+    
+    <div id="loading">AI 正在根据岗位需求严格审阅简历... 🤖</div>
+    <pre id="result"></pre>
+</div>
+
+<script>
+    async function uploadResume() {
+        const fileInput = document.getElementById('resumeFile');
+        const jobDescInput = document.getElementById('jobDesc').value;
+        const resultBox = document.getElementById('result');
+        const loadingBox = document.getElementById('loading');
+
+        if (fileInput.files.length === 0) {
+            alert("请先选择一份 PDF 文件！");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        formData.append("job_desc", jobDescInput); 
+
+        loadingBox.style.display = "block";
+        resultBox.style.display = "none";
+
+        try {
+           const response = await fetch("https://resume-backend-imocteqstb.cn-hangzhou.fcapp.run", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                alert("报错啦：" + data.detail);
+                return;
+            }
+
+            resultBox.textContent = JSON.stringify(data, null, 4);
+            resultBox.style.display = "block";
+
+        } catch (error) {
+            alert("请求失败，请检查后端黑框框有没有报错哦：" + error);
+        } finally {
+            loadingBox.style.display = "none";
+        }
+    }
+</script>
+
+</body>
+</html>
