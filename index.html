@@ -57,7 +57,7 @@
         resultBox.style.display = "none";
 
         try {
-           const response = await fetch("https://resume-backend-imocteqstb.cn-hangzhou.fcapp.run", {
+           const response = await fetch("https://resume-backend-imocteqstb.cn-hangzhou.fcapp.run/api/analyze", {
                 method: "POST",
                 body: formData
             });
@@ -81,4 +81,5 @@
 </script>
 
 </body>
+
 </html>
